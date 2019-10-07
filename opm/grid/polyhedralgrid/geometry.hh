@@ -173,6 +173,7 @@ namespace Dune
 #if DUNE_VERSION_NEWER(DUNE_GRID,2,4)
     JacobianTransposed jacobianTransposed ( const LocalCoordinate & ) const
     {
+      assert( false );
       DUNE_THROW(NotImplemented,"jacobianTransposed not implemented");
       return JacobianTransposed( 0 );
     }
