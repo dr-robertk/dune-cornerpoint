@@ -542,7 +542,7 @@ namespace Dune
             /// This method is meaningless for singular geometries.
             GlobalCoordinate corner(int /* cor */) const
             {
-                // Meaningless call to cpgrid::Geometry::corner(int): 
+                // Meaningless call to cpgrid::Geometry::corner(int):
                 //"singular geometry has no corners.
                 // But the DUNE tests assume at least one corner.
                 return GlobalCoordinate( 0.0 );
@@ -590,6 +590,13 @@ namespace Dune
 
 
     } // namespace cpgrid
+
+#if DUNE_VERSION_NEWER(DUNE_GRID, 2, 6)
+    template <int dim, int cdim>
+    auto referenceElement(const Dune::cpgrid::Geometry<dim, cdim>& geo) -> decltype(referenceElement<double, dim>(geo.type()))
+    { return referenceElement<double, dim>(geo.type()); }
+#endif
+
 } // namespace Dune
 
 #endif // OPM_GEOMETRY_HEADER
