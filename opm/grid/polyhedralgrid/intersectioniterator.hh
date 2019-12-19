@@ -41,6 +41,10 @@ namespace Dune
       : intersection_( IntersectionImpl( other.intersectionImpl()) )
     {}
 
+    PolyhedralGridIntersectionIterator ( )
+      : intersection_()
+    {}
+
     PolyhedralGridIntersectionIterator& operator=( const This& other )
     {
       intersectionImpl() = other.intersectionImpl();
@@ -67,7 +71,7 @@ namespace Dune
   protected:
     IntersectionImpl &intersectionImpl () const
     {
-      return Grid::getRealImplementation( intersection_ );
+      return intersection_.impl();
     }
 
     mutable Intersection intersection_;

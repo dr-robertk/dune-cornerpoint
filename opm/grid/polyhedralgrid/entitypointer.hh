@@ -76,7 +76,7 @@ namespace Dune
   protected:
     EntityImpl &entityImpl () const
     {
-      return Grid::getRealImplementation( entity_ );
+      return entity_.impl();
     }
 
     ExtraData data () const { return entityImpl().data(); }

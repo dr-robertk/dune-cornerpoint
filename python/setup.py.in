@@ -1,0 +1,11 @@
+from setuptools import setup, find_packages
+
+setup(name="dune.polyhedralgrid",
+    namespace_packages=['dune'],
+    description="Polyhedral Grid for DUNE",
+    version="${DUNE_GRID_VERSION}",
+    author="Robert Kloefkorn",
+    packages = find_packages(),
+    zip_safe = 0,
+    package_data = {'': ['*.so']}
+  )

@@ -109,6 +109,12 @@ namespace Dune
       DUNE_THROW(NotImplemented,"yet");
     }
 
+    void insertBoundarySegment(const std::vector<unsigned int>&,
+                               const std::shared_ptr<Dune::BoundarySegment<dimension, dimensionworld> >&)
+    {
+      DUNE_THROW(NotImplemented,"yet");
+    }
+
     UniquePtrType createGrid()
     {
       std::vector< CoordinateType >& nodes = nodes_;

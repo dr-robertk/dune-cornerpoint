@@ -161,8 +161,6 @@ CpGrid::scatterGrid(EdgeWeightMethod method, const std::vector<cpgrid::OpmWellTy
         auto defunct_wells = std::get<1>(part_and_wells);
         auto exportList = std::get<2>(part_and_wells);
         auto importList = std::get<3>(part_and_wells);
-#else
-        OPM_THROW(std::runtime_error, "Parallel runs depend on ZOLTAN. Please install!");
         // std::vector<int> cell_part(current_view_data_->global_cell_.size());
         // int  num_parts=-1;
         // std::array<int, 3> initial_split;
@@ -194,7 +192,6 @@ CpGrid::scatterGrid(EdgeWeightMethod method, const std::vector<cpgrid::OpmWellTy
         //                                                     cc,
         //                                                     0);
         // }
-#endif
 
         bool ownersFirst = false;
 
@@ -257,6 +254,9 @@ CpGrid::scatterGrid(EdgeWeightMethod method, const std::vector<cpgrid::OpmWellTy
 
         current_view_data_ = distributed_data_.get();
         return std::make_pair(true, defunct_wells);
+#else
+        OPM_THROW(std::runtime_error, "Parallel runs depend on ZOLTAN. Please install!");
+#endif
     }
     else
     {

@@ -44,6 +44,12 @@ namespace Dune
     typedef typename Traits::template Codim< 1 >::LocalGeometryImpl LocalGeometryImpl;
 
   public:
+    PolyhedralGridIntersection ()
+    : data_( nullptr ),
+      seed_(),
+      intersectionIdx_( -1 )
+    {}
+
     explicit PolyhedralGridIntersection ( ExtraData data )
     : data_( data ),
       seed_(),

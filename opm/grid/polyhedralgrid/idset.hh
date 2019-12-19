@@ -68,7 +68,7 @@ namespace Dune
     template< class IntersectionImpl >
     IdType id ( const Dune::Intersection< const Grid, IntersectionImpl >& intersection ) const
     {
-      return Grid::getRealImplementation( intersection ).id();
+      return intersection.impl().id();
     }
 
     //! subId method for entities
