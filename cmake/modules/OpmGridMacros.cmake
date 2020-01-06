@@ -9,6 +9,11 @@
 # to be buggy)
 list(INSERT 0 CMAKE_MODULE_PATH "${opm-grid_MODULE_PATH}")
 
+#define available alugrid types
+dune_define_gridtype(GRIDSELECTOR_GRIDS GRIDTYPE POLYHEDRALGRID
+    DUNETYPE "Dune::PolyhedralGrid< dimgrid, dimworld, double >"
+    HEADERS opm/grid/polyhedralgrid.hh opm/grid/polyhedralgrid/dgfparser.hh)
+
 find_package(ZOLTAN)
 if(ZOLTAN_FOUND)
   dune_register_package_flags(

@@ -13,6 +13,7 @@
 #include <dune/geometry/referenceelements.hh>
 #include <dune/geometry/type.hh>
 #include <dune/geometry/multilineargeometry.hh>
+#include <dune/geometry/axisalignedcubegeometry.hh>
 #else
 #include <dune/geometry/genericgeometry/geometrytraits.hh>
 #include <dune/geometry/genericgeometry/matrixhelper.hh>
@@ -112,6 +113,8 @@ namespace Dune
     typedef Dune::MultiLinearGeometry< ctype, mydimension, coorddimension, PolyhedralMultiLinearGeometryTraits<ctype> >
       MultiLinearGeometryType;
 
+    typedef Dune::AxisAlignedCubeGeometry< ctype, mydimension, coorddimension> CartesianGeometryType;
+
     typedef typename PolyhedralMultiLinearGeometryTraits< ctype > ::template
       CornerStorage<mydimension, coorddimension >::Type CornerStorageType;
 
@@ -138,7 +141,7 @@ namespace Dune
     }
 
     GeometryType type () const { return storage_.type(); }
-    bool affine () const { return (geometryImpl_) ? geometryImpl_->affine() : false; }
+    bool affine () const { return (geometryImpl_) ? geometryImpl_->affine() : true; }
 
     int corners () const { return storage_.corners(); }
     GlobalCoordinate corner ( const int i ) const { return storage_.corner( i ); }
@@ -153,6 +156,10 @@ namespace Dune
       {
         return geometryImpl().global( local );
       }
+      else
+      {
+        return bboxImpl().global( local );
+      }
 
       return center();
     }
@@ -165,6 +172,10 @@ namespace Dune
       {
         return geometryImpl().local( global );
       }
+      else
+      {
+        return bboxImpl().local( global );
+      }
 
       // if no geometry type return a vector filled with 1
       return LocalCoordinate( 1 );
@@ -176,6 +187,11 @@ namespace Dune
       {
         return geometryImpl().integrationElement( local );
       }
+      else
+      {
+        bboxImpl().integrationElement( local );
+      }
+
       return volume();
     }
 
@@ -191,6 +207,10 @@ namespace Dune
       {
         return geometryImpl().jacobianTransposed( local );
       }
+      else
+      {
+        return bboxImpl().jacobianTransposed( local );
+      }
 
       DUNE_THROW(NotImplemented,"jacobianTransposed not implemented");
       return JacobianTransposed( 0 );
@@ -201,6 +221,10 @@ namespace Dune
       if( storage_.hasGeometry()  )
       {
         return geometryImpl().jacobianInverseTransposed( local );
+      }
+      else
+      {
+        return bboxImpl().jacobianInverseTransposed( local );
       }
 
       DUNE_THROW(NotImplemented,"jacobianInverseTransposed not implemented");
@@ -246,8 +270,23 @@ namespace Dune
       return *geometryImpl_;
     }
 
+    const CartesianGeometryType& bboxImpl() const
+    {
+      assert( ! storage_.hasGeometry() );
+      if( ! bboxImpl_ )
+      {
+        GlobalCoordinate lower;
+        GlobalCoordinate upper;
+        data()->computeBoundingBox( storage_.seed(), lower, upper );
+        bboxImpl_.reset( new CartesianGeometryType( lower, upper ) );
+      }
+
+      return *bboxImpl_;
+    }
+
     CornerStorageType storage_;
     mutable std::shared_ptr< MultiLinearGeometryType > geometryImpl_;
+    mutable std::shared_ptr< CartesianGeometryType >   bboxImpl_;
   };
 
 

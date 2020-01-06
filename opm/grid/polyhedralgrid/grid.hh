@@ -14,9 +14,15 @@
 
 //- dune-grid includes
 #include <dune/grid/common/grid.hh>
+#include <dune/common/parallel/mpihelper.hh>
+
+#if DUNE_VERSION_NEWER(DUNE_COMMON, 2,7)
+#include <dune/common/parallel/communication.hh>
+#include <dune/common/parallel/mpicommunication.hh>
+#else
 #include <dune/common/parallel/collectivecommunication.hh>
 #include <dune/common/parallel/mpicollectivecommunication.hh>
-#include <dune/common/parallel/mpihelper.hh>
+#endif
 
 //- polyhedralgrid includes
 #include <opm/grid/polyhedralgrid/capabilities.hh>
@@ -1000,6 +1006,25 @@ namespace Dune
     }
 
     template <class EntitySeed>
+    void computeBoundingBox( const EntitySeed& seed,
+                             GlobalCoordinate& lower,
+                             GlobalCoordinate& upper ) const
+    {
+      const int nCorners = corners( seed );
+      lower = corner( seed, 0 );
+      upper = lower;
+      for( int i=1; i<nCorners; ++i )
+      {
+        const auto& corn = corner( seed, i );
+        for( int d=0; d<dim; ++d )
+        {
+          lower[ d ] = std::min( lower[ d ], corn[ d ]);
+          upper[ d ] = std::max( upper[ d ], corn[ d ]);
+        }
+      }
+    }
+
+    template <class EntitySeed>
     int subEntities( const EntitySeed& seed, const int codim ) const
     {
       const int index = seed.index();
@@ -1788,6 +1813,7 @@ namespace Dune
     mutable LocalIdSet localIdSet_;
 
     size_t nBndSegments_;
+    bool enableBoundingBox_;
 
   private:
     // no copying
