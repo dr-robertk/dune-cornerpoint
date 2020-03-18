@@ -177,9 +177,9 @@ public:
    * @param rank The other rank that the interface communicates with.
    * @param info A list of local indices belonging to this interface.
    */
-  InterfaceTracker(int rank, InterfaceInformation info, std::size_t fixedsize=0,
+  InterfaceTracker(int rank, InterfaceInformation info, std::size_t fixedSize=0,
                    bool allocateSizes=false)
-    : fixedSize(fixedsize),rank_(rank), index_(), interface_(info), sizes_()
+    : fixedSize_(fixedSize),rank_(rank), index_(), interface_(info), sizes_()
   {
     if(allocateSizes)
     {
@@ -264,7 +264,7 @@ public:
   /**
    * @brief The number of data items per index if it is fixed, 0 otherwise.
    */
-  std::size_t fixedSize;
+  std::size_t fixedSize_;
   /**
    * @brief Get the process rank that this communication interface is with.
    */
@@ -422,7 +422,7 @@ public:
    * to the following interface:
    * \code{.cpp}
    * // returns whether the number of data items per entry is fixed
-   * bool fixedsize();
+   * bool fixedSize();
    * // get the number of data items for an entry with index i
    * std::size_t size(std::size_t i);
    * // gather the data at index i
@@ -447,7 +447,7 @@ public:
    * to the following interface:
    * \code{.cpp}
    * // returns whether the number of data items per entry is fixed
-   * bool fixedsize();
+   * bool fixedSize();
    * // get the number of data items for an entry with index i
    * std::size_t size(std::size_t i);
    * // gather the data at index i
@@ -548,7 +548,7 @@ public:
                  std::vector<InterfaceTracker>& trackers)
     : data_(data), trackers_(trackers), index_()
   {}
-  bool fixedsize()
+  bool fixedSize()
   {
     return true;
   }
@@ -658,16 +658,16 @@ struct PackEntries
   int operator()(DataHandle& handle, InterfaceTracker& tracker,
                  MessageBuffer<typename DataHandle::DataType>& buffer) const
   {
-    if(tracker.fixedSize) // fixed size if variable is >0!
+    if(tracker.fixedSize_) // fixed size if variable is >0!
     {
 
-      std::size_t noIndices=std::min(buffer.size()/tracker.fixedSize, tracker.indicesLeft());
+      std::size_t noIndices=std::min(buffer.size()/tracker.fixedSize_, tracker.indicesLeft());
       for(std::size_t i=0; i< noIndices; ++i)
       {
         handle.gather(buffer, tracker.index());
         tracker.moveToNextIndex();
       }
-      return noIndices*tracker.fixedSize;
+      return noIndices*tracker.fixedSize_;
     }
     else
     {
@@ -709,13 +709,13 @@ struct UnpackEntries{
                   MessageBuffer<typename DataHandle::DataType>& buffer,
                   int count=0)
   {
-    if(tracker.fixedSize) // fixed size if variable is >0!
+    if(tracker.fixedSize_) // fixed size if variable is >0!
     {
-      std::size_t noIndices=std::min(buffer.size()/tracker.fixedSize, tracker.indicesLeft());
+      std::size_t noIndices=std::min(buffer.size()/tracker.fixedSize_, tracker.indicesLeft());
 
       for(std::size_t i=0; i< noIndices; ++i)
       {
-        handle.scatter(buffer, tracker.index(), tracker.fixedSize);
+        handle.scatter(buffer, tracker.index(), tracker.fixedSize_);
         tracker.moveToNextIndex();
       }
       return tracker.finished();
@@ -785,7 +785,7 @@ void sendFixedSize(std::vector<InterfaceTracker>& send_trackers,
   for(TIter iter=recv_trackers.begin(), end=recv_trackers.end(); iter!=end;
       ++iter, ++mIter)
   {
-    MPI_Irecv(&(iter->fixedSize), 1, Dune::MPITraits<std::size_t>::getType(),
+    MPI_Irecv(&(iter->fixedSize_), 1, Dune::MPITraits<std::size_t>::getType(),
               iter->rank(), 933881, communicator, &(*mIter));
   }
 
@@ -795,7 +795,7 @@ void sendFixedSize(std::vector<InterfaceTracker>& send_trackers,
       iter!=end;
       ++iter, ++mIter1)
   {
-    MPI_Issend(&(iter->fixedSize), 1, Dune::MPITraits<std::size_t>::getType(),
+    MPI_Issend(&(iter->fixedSize_), 1, Dune::MPITraits<std::size_t>::getType(),
                iter->rank(), 933881, communicator, &(*mIter1));
   }
 }
@@ -984,7 +984,7 @@ std::size_t checkReceiveAndContinueReceiving(DataHandle& handle,
 {
   return checkAndContinue(handle, trackers, requests, requests, buffers, comm,
                           UnpackEntries<DataHandle>(), SetupRecvRequest<DataHandle>(),
-                          true, !handle.fixedsize());
+                          true, !handle.fixedSize());
 }
 
 
@@ -1040,22 +1040,22 @@ void VariableSizeCommunicator<Allocator>::setupInterfaceTrackers(DataHandle& han
   send_trackers.reserve(interface_->size());
   recv_trackers.reserve(interface_->size());
 
-  int fixedsize=0;
-  if(handle.fixedsize())
-    ++fixedsize;
+  int fixedSize=0;
+  if(handle.fixedSize())
+    ++fixedSize;
 
 
   typedef typename InterfaceMap::const_iterator IIter;
   for(IIter inf=interface_->begin(), end=interface_->end(); inf!=end; ++inf)
   {
 
-    if(handle.fixedsize() && InterfaceInformationChooser<FORWARD>::getSend(inf->second).size())
-      fixedsize=handle.size(InterfaceInformationChooser<FORWARD>::getSend(inf->second)[0]);
-    assert(!handle.fixedsize()||fixedsize>0);
+    if(handle.fixedSize() && InterfaceInformationChooser<FORWARD>::getSend(inf->second).size())
+      fixedSize=handle.size(InterfaceInformationChooser<FORWARD>::getSend(inf->second)[0]);
+    assert(!handle.fixedSize()||fixedSize>0);
     send_trackers.push_back(InterfaceTracker(inf->first,
-                                             InterfaceInformationChooser<FORWARD>::getSend(inf->second), fixedsize));
+                                             InterfaceInformationChooser<FORWARD>::getSend(inf->second), fixedSize));
     recv_trackers.push_back(InterfaceTracker(inf->first,
-                                             InterfaceInformationChooser<FORWARD>::getReceive(inf->second), fixedsize, fixedsize==0));
+                                             InterfaceInformationChooser<FORWARD>::getReceive(inf->second), fixedSize, fixedSize==0));
   }
 }
 
@@ -1095,7 +1095,7 @@ void VariableSizeCommunicator<Allocator>::communicateFixedSize(DataHandle& handl
 
   while(no_size_to_recv+no_to_send+no_to_recv)
   {
-    // Receive the fixedsize and setup receives accordingly
+    // Receive the fixedSize and setup receives accordingly
     if(no_size_to_recv)
       no_size_to_recv -= receiveSizeAndSetupReceive(handle,recv_trackers, size_recv_req,
                                                   data_recv_req, recv_buffers,
@@ -1216,7 +1216,7 @@ void VariableSizeCommunicator<Allocator>::communicate(DataHandle& handle)
     // either for MPI_Wait_all or MPI_Test_some.
     return;
 
-  if(handle.fixedsize())
+  if(handle.fixedSize())
     communicateFixedSize<FORWARD>(handle);
   else
     communicateVariableSize<FORWARD>(handle);

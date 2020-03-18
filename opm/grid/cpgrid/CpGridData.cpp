@@ -248,7 +248,7 @@ struct DefaultContainerHandle
     DefaultContainerHandle(const C& gatherCont, C& scatterCont)
         : gatherCont_(gatherCont), scatterCont_(scatterCont)
     {}
-    bool fixedsize(std::size_t, std::size_t)
+    bool fixedSize(std::size_t, std::size_t)
     {
         return true;
     }
@@ -289,7 +289,7 @@ struct FaceTagNormalBIdHandle
         : gatherTags_(gatherTags), gatherNormals_(gatherNormals), gatherBIds_(gatherBIds),
           scatterTags_(scatterTags), scatterNormals_(scatterNormals), scatterBIds_(scatterBIds)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -346,7 +346,7 @@ struct FaceTagNormalHandle
         : gatherTags_(gatherTags), gatherNormals_(gatherNormals),
           scatterTags_(scatterTags), scatterNormals_(scatterNormals)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -394,7 +394,7 @@ struct PointGeometryHandle
     PointGeometryHandle(const Container& gatherCont, Container& scatterCont)
         : gatherPoints_(gatherCont), scatterPoints_(scatterCont)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -450,7 +450,7 @@ struct FaceGeometryHandle
     FaceGeometryHandle(const Container& gatherCont, Container& scatterCont)
         : gatherPoints_(gatherCont), scatterPoints_(scatterCont)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -502,7 +502,7 @@ struct CellGeometryHandle
         : gatherCont_(gatherCont), scatterCont_(scatterCont), pointGeom_(pointGeom),
           cell2Points_(cell2Points)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -568,7 +568,7 @@ struct Cell2PointsDataHandle
         : globalCell2Points_(globalCell2Points), globalIds_(globalIds), globalAdditionalPointIds_(globalAdditionalPointIds),
           localCell2Points_(localCell2Points), flatGlobalPoints_(flatGlobalPoints), additionalPointIds_(additionalPointIds)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return false;
     }
@@ -630,7 +630,7 @@ struct RowSizeDataHandle
                       std::vector<int>& noEntries)
         : global_(global), noEntries_(noEntries)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return true;
     }
@@ -689,7 +689,7 @@ struct SparseTableDataHandle
                           const std::map<int,int>& global2Local)
         : global_(global), globalIds_(globalIds), local_(local), global2Local_(global2Local)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return false;
     }
@@ -744,7 +744,7 @@ struct OrientedEntityTableDataHandle
                                   const IdSet* globalIds = nullptr)
         : global_(global), local_(local), globalIds_(globalIds)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return false;
     }
@@ -924,7 +924,7 @@ struct AttributeDataHandle
         : rank_(rank), indicator_(indicator), vals_(vals),
         c2e_(cell_to_entity), grid_(grid)
     {}
-    bool fixedsize()
+    bool fixedSize()
     {
         return true;
     }

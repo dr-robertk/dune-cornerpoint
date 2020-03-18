@@ -71,7 +71,7 @@ struct FaceViaCellHandleWrapper
                              const C2FTable& c2f)
         : handle_(handle), c2fGather_(c2fGather), c2f_(c2f)
     {}
-    bool fixedsize(int, int)
+    bool fixedSize(int, int)
     {
         return false; // as the faces per cell differ
     }
@@ -176,13 +176,13 @@ struct PointViaCellHandleWrapper : public PointViaCellWarner
                              const C2PTable& c2p)
         : handle_(handle), c2pGather_(c2pGather), c2p_(c2p)
     {}
-    bool fixedsize(int i, int j)
+    bool fixedSize(int i, int j)
     {
-        if( ! handle_.fixedsize(i, j))
+        if( ! handle_.fixedSize(i, j))
         {
             this->warn();
         }
-        return handle_.fixedsize(i, j);
+        return handle_.fixedSize(i, j);
     }
     template<class T>
     typename std::enable_if<T::codimension != 0, std::size_t>::type

@@ -72,7 +72,7 @@ public:
           dist_cell_ids_(dist_cell_ids)
     {}
     typedef int DataType;
-    bool fixedsize(int /*dim*/, int /*codim*/)
+    bool fixedSize(int /*dim*/, int /*codim*/)
     {
         return true;
     }
@@ -121,7 +121,7 @@ public:
     {}
 
     typedef int DataType;
-    bool fixedsize()
+    bool fixedSize()
     {
         return true;
     }
@@ -161,7 +161,7 @@ public:
     {}
 
     typedef int DataType;
-    bool fixedsize(int /*dim*/, int /*codim*/)
+    bool fixedSize(int /*dim*/, int /*codim*/)
     {
         return true;
     }
@@ -202,7 +202,7 @@ private:
 /// that checks the correctness of the unique boundary ids at the receiving
 /// end.
 ///
-/// We used fixedsize for the message as there is a bug in DUNE up to 2.6.0
+/// We used fixedSize for the message as there is a bug in DUNE up to 2.6.0
 class CheckBoundaryIdHandle
 {
 public:
@@ -213,9 +213,9 @@ public:
     {}
 
     typedef int DataType;
-    bool fixedsize()
+    bool fixedSize()
     {
-        // We used fixedsize for the message as there is a bug in DUNE
+        // We used fixedSize for the message as there is a bug in DUNE
         // up to 2.6.0
         return true;
         //return false;
@@ -236,7 +236,7 @@ public:
         {
             buffer.write(sendGrid_.boundaryId(sendGrid_.cellFace(i, j)));
         }
-        // We used fixedsize for the message as there is a bug in DUNE
+        // We used fixedSize for the message as there is a bug in DUNE
         // up to 2.6.0. Fill the buffer with bogus numbers
         for(; j < 6; ++j)
             buffer.write(-1);
@@ -252,7 +252,7 @@ public:
             buffer.read(id);
             BOOST_REQUIRE(id == recvGrid_.boundaryId(recvGrid_.cellFace(i, j)));
         }
-        // We used fixedsize for the message as there is a bug in DUNE
+        // We used fixedSize for the message as there is a bug in DUNE
         // up to 2.6.0. read the bogus numbers from buffer.
         for(;j<6; ++j)
             buffer.read(id);
@@ -266,7 +266,7 @@ class DummyDataHandle
 {
 public:
     typedef double DataType;
-    bool fixedsize(int /*dim*/, int /*codim*/)
+    bool fixedSize(int /*dim*/, int /*codim*/)
     {
         return true;
     }
@@ -307,7 +307,7 @@ public:
     {}
 
     typedef int DataType;
-    bool fixedsize(int /*dim*/, int /*codim*/)
+    bool fixedSize(int /*dim*/, int /*codim*/)
     {
         return true;
     }

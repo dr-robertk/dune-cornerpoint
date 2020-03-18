@@ -59,9 +59,9 @@ public:
     Entity2IndexDataHandle(const CpGridData& fromGrid, const CpGridData& toGrid, DataHandle& data)
         : fromGrid_(fromGrid), toGrid_(toGrid), data_(data)
     {}
-    bool fixedsize()
+    bool fixedSize()
     {
-        return data_.fixedsize(3, codim);
+        return data_.fixedSize(3, codim);
     }
     std::size_t size(std::size_t i)
     {
