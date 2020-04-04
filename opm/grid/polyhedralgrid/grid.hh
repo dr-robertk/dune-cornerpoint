@@ -939,8 +939,6 @@ namespace Dune
     }
 
   public:
-    using Base::getRealImplementation;
-
     typedef typename Traits :: ExtraData ExtraData;
     ExtraData extraData () const  { return this; }
 
